@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CRNGroupApp.Data
 {
     public class ShoppingList
@@ -12,7 +13,7 @@ namespace CRNGroupApp.Data
         [Key]
         public int ShoppingListId { get; set; }
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

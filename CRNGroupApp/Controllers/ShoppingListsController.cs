@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CRNGroupApp.Data;
+using Microsoft.AspNet.Identity;
+
+
 
 namespace CRNGroupApp.Controllers
 {
@@ -50,6 +53,8 @@ namespace CRNGroupApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                shoppingList.UserId = User.Identity.GetUserId();
+                shoppingList.CreatedUtc = DateTimeOffset.UtcNow;
                 db.ShoppingLists.Add(shoppingList);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -82,6 +87,7 @@ namespace CRNGroupApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                shoppingList.ModifiedUtc = DateTimeOffset.UtcNow;
                 db.Entry(shoppingList).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
