@@ -68,11 +68,24 @@ namespace CRNGroupApp.Controllers
         //[ValidateAntiForgeryToken]  //referencing id in order to update IsChecked,creating a new instance of class and calling it "shoppingListItem"
         public ActionResult UpdateCheckbox([Bind(Include = "ShoppingListItemId, IsChecked")] ShoppingListItem shoppingListItem)
         {   //pulling data from db and holding it in memory
-            var item = db.ShoppingListItems.Find(shoppingListItem.ShoppingListItemId);
+            var row = db.ShoppingListItems.Single(e => e.ShoppingListItemId == shoppingListItem.ShoppingListItemId );
+            //db.ShoppingListItems.
+            if (row.IsChecked == true)
+            {
+                shoppingListItem.IsChecked = false;
+                row.IsChecked = false;
+            }
+            else
+            {
+                shoppingListItem.IsChecked = true;
+                row.IsChecked = true;
+            }
             //referencing IsChecked on item and converting it to IsChecked on shoppingListItem
-            item.IsChecked = shoppingListItem.IsChecked;
+            //item.IsChecked = !shoppingListItem.IsChecked;
             //Save changes
+            //db.ShoppingListItems.Add(shoppingListItem);
             db.SaveChanges();
+            //db.
             return Json("success");
         }
 

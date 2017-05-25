@@ -42,7 +42,7 @@
             @Html.DisplayFor(modelItem => item.ShoppingList.Name)
         </td>*@
         <td>
-            @Html.DisplayFor(modelItem => item.IsChecked)
+            @Html.CheckBoxFor(modelItem => item.IsChecked, new { onclick = "SomeMethod(this)" })
         </td>
 
         <td>
@@ -69,25 +69,28 @@
 }
 
 </table>
+
 @section scripts {
     <script language="javascript" text="text/javascript">
         $(document)
             .ready(function() {
                 $("input.itemCheckBoxes") //css selector to find elements in page
                     .css({ "cursor": "pointer" })
-                    .click(function(e) {
+                    .click(function (e) {
                         var target = $(e.target);
-                        var shoppingListItemId = target.attr("id");
-
+                        @*var shoppingListItemId = *@
+                        function SomeMethod(CheckboxInput){
                         $.ajax({
-                                method: "POST",
-                                url: "/shoppinglist/updatecheckbox",
-                                data: {
-                                    ShoppingListItemId: shoppingListItemId,
-                                    IsChecked: target.is(":checked")
-                                }
-                            })
-                            .done(function(r) {
+                            method: "POST",
+                            url: "/shoppinglist/updatecheckbox",
+                            data: {
+                                
+                                ShoppingListItemId: CheckboxInput.ShoppingListItemId,
+                                IsChecked: CheckboxInput.IsChecked
+                            }
+                        })
+                    
+                           .done(function(r) {
                                 console.log("finished setting IsChecked - " + r);
                             })
                             .fail(function(r) {
