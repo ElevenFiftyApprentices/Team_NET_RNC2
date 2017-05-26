@@ -13,7 +13,8 @@ namespace CRNGroupApp.Models
         [Key]
         public int ShoppingListId { get; set; }
 
-        public int? UserId { get; set; }
+        [Required]
+        public Guid OwneriD { get; set; }
 
         [Required]
         [MinLength(2)]

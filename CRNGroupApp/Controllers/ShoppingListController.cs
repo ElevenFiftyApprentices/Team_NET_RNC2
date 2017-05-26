@@ -14,6 +14,7 @@ namespace CRNGroupApp.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: ShoppingListModel
+        [Authorize]
         public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -54,6 +55,7 @@ namespace CRNGroupApp.Controllers
         }
 
         // GET: ShoppingListModel/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
 
@@ -75,6 +77,7 @@ namespace CRNGroupApp.Controllers
         //adding ViewItem to ShoppingListController
 
         // GET: ViewItem/View
+        [Authorize]
         public ActionResult ViewItem(int? id)
         {
 
