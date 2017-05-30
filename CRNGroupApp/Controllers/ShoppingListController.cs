@@ -4,6 +4,8 @@ using System.Net;
 using System.Web.Mvc;
 using CRNGroupApp.Data;
 using System;
+using CRNGroupApp.Services;
+using Microsoft.AspNet.Identity;
 using PagedList;
 using System.Xml.Linq;
 
@@ -16,18 +18,32 @@ namespace CRNGroupApp.Controllers
         // GET: ShoppingListModel
         public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            var service = CreateListService();
+            var model = service.GetLists();
+            //var ctxdb = db.ShoppingLists
+           //             .Where(e => e.UserId == Guid.Parse(User.Identity.GetUserId()));
+
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             if (searchString != null)
             {
-                page = 1;
+                
+                var shopinglistso = from s in db.ShoppingLists
+                                    select s;
+                //model = shopinglistso.Where(s => s.Name.Contains(searchString));
+                model = model.Where(s => s.Name.Contains(searchString));
             }
             else
             {
                 searchString = currentFilter;
             }
 
-            ViewBag.CurrentFilter = searchString;
+            //CHRIS: YOU MADE THIS C LOWER CASE DONT FORGET TO REVERT IF THAT DOESNT SOVLE THE ISSUE
+            ViewBag.currentFilter = searchString;
 
             var shopinglists = from s in db.ShoppingLists
                            select s;
@@ -46,12 +62,17 @@ namespace CRNGroupApp.Controllers
                     shopinglists = shopinglists.OrderBy(s => s.Name);
                     break;
             }
+            //var shoppingListItems = db.ShoppingListItems.Include(s => s.ShoppingList);
+            
 
-            int pageSize = 3;
+            return View(model.OrderBy(s => s.Name).ToPagedList(pageNumber, pageSize));
+            }
+
+           /* int pageSize = 3;
             int pageNumber = (page ?? 1);
             //var shoppingListItems = db.ShoppingListItems.Include(s => s.ShoppingList);
             return View(shopinglists.ToPagedList(pageNumber, pageSize));
-        }
+        }*/
 
         // GET: ShoppingListModel/Details/5
         public ActionResult Details(int? id)
@@ -150,6 +171,8 @@ namespace CRNGroupApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                shoppingListModel.UserId = Guid.Parse(User.Identity.GetUserId());
+                shoppingListModel.CreatedUtc = DateTimeOffset.Now;
                 db.ShoppingLists.Add(shoppingListModel);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -225,5 +248,13 @@ namespace CRNGroupApp.Controllers
             }
             base.Dispose(disposing);
         }
+
+        private ListService CreateListService()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new ListService(userId);
+            return service;
+        }
+
     }
 }
